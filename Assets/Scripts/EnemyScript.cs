@@ -18,10 +18,5 @@ public class EnemyScript : MonoBehaviour
 	void Update ()
 	{
 		transform.position += Vector3.left * moveSpeed * Time.deltaTime;
-
-		if (transform.position.x < -10f)
-		{
-			Destroy (gameObject);
-		}
 	}
 }

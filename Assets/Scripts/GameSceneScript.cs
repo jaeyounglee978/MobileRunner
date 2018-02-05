@@ -13,6 +13,7 @@ public class GameSceneScript : MonoBehaviour
 	float responeTime;
 	public float playerSpeed;
 	Vector3 startPosition;
+	Queue<GameObject> EnemyQueue;
 
 	// Use this for initialization
 	void Start ()
@@ -23,6 +24,7 @@ public class GameSceneScript : MonoBehaviour
 		startPosition = Floor.transform.position;
 		currentScore = 0;
 		Score.GetComponent<Text>().text = currentScore.ToString();
+		EnemyQueue = new Queue<GameObject> ();
 	}
 	
 	// Update is called once per frame
@@ -35,6 +37,12 @@ public class GameSceneScript : MonoBehaviour
 
 		float newPosition = Mathf.Repeat (Time.time * playerSpeed, 6f);
 		Floor.transform.position = startPosition + Vector3.left * newPosition;
+
+		if (EnemyQueue.Count > 0)
+		{
+			if (EnemyQueue.Peek ().transform.position.x < -10f)
+				Destroy (EnemyQueue.Dequeue ());
+		}
 	}
 
 	public void PauseMenuButton()
@@ -57,6 +65,7 @@ public class GameSceneScript : MonoBehaviour
 		GameObject newEnemy = Instantiate(Enemy, new Vector3(10f, -2.6f, 0f), Quaternion.identity);
 		newEnemy.GetComponent<EnemyScript>().moveSpeed = playerSpeed;
 		newEnemy.GetComponent<EnemyScript>().elastic = 4f;
+		EnemyQueue.Enqueue (newEnemy);
 		responeTime = 0.7f;
 	}
 
