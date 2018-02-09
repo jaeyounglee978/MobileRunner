@@ -14,6 +14,7 @@ public class GameSceneScript : MonoBehaviour
 	public float playerSpeed;
 	Vector3 startPosition;
 	Queue<GameObject> EnemyQueue;
+	public bool isPlaying;
 
 	// Use this for initialization
 	void Start ()
@@ -21,27 +22,31 @@ public class GameSceneScript : MonoBehaviour
 		PauseMenu.SetActive(false);
 		responeTime = 1.0f;
 		playerSpeed = 5.0f;
-		startPosition = Floor.transform.position;
+
 		currentScore = 0;
 		Score.GetComponent<Text>().text = currentScore.ToString();
 		EnemyQueue = new Queue<GameObject> ();
+		isPlaying = false;
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-		responeTime -= Time.deltaTime;
-
-		if (responeTime < 0)
-			EnemyGenerator ();
-
-		float newPosition = Mathf.Repeat (Time.time * playerSpeed, 6f);
-		Floor.transform.position = startPosition + Vector3.left * newPosition;
-
-		if (EnemyQueue.Count > 0)
+		if (isPlaying)
 		{
-			if (EnemyQueue.Peek ().transform.position.x < -10f)
-				Destroy (EnemyQueue.Dequeue ());
+			responeTime -= Time.deltaTime;
+
+			if (responeTime < 0)
+				EnemyGenerator ();
+
+			float newPosition = Mathf.Repeat (Time.time * playerSpeed, 6f);
+			Floor.transform.position = startPosition + Vector3.left * newPosition;
+
+			if (EnemyQueue.Count > 0)
+			{
+				if (EnemyQueue.Peek ().transform.position.x < -10f)
+					Destroy (EnemyQueue.Dequeue ());
+			}
 		}
 	}
 
@@ -73,5 +78,10 @@ public class GameSceneScript : MonoBehaviour
 	{
 		currentScore += score;
 		Score.GetComponent<Text>().text = currentScore.ToString ();
+	}
+
+	public void SetFloorPosition()
+	{
+		startPosition = Floor.transform.position;
 	}
 }

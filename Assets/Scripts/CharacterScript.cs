@@ -7,7 +7,7 @@ public class CharacterScript : MonoBehaviour
 {
 
 	public float gravity;
-	Vector3 velocity;
+	public Vector3 velocity;
 	public GameObject GameOverLayer;
 	public GameObject SceneManager;
 	GameSceneScript sceneManager;
@@ -23,7 +23,6 @@ public class CharacterScript : MonoBehaviour
 	void Update ()
 	{
 		transform.position += velocity * Time.deltaTime;
-		velocity += Vector3.down * gravity * Time.deltaTime;
 
 		if (transform.position.y <= -2.3)
 		{
@@ -37,24 +36,29 @@ public class CharacterScript : MonoBehaviour
 			}
 			else
 			{
+				sceneManager.isPlaying = false;
 				GameOverLayer.SetActive (true);	
 			}
 		}
 
-		if (Input.GetKeyDown (KeyCode.Space))
+		if (sceneManager.isPlaying)
 		{
-			GameObject stamp = Stamping ();
+			velocity += Vector3.down * gravity * Time.deltaTime;
+			if (Input.GetKeyDown (KeyCode.Space))
+			{
+				GameObject stamp = Stamping ();
 
-			if (stamp != null)
-			{
-				Debug.Log ("Jump");
-				velocity = Vector3.up * stamp.GetComponent<EnemyScript> ().elastic;
-				sceneManager.playerSpeed += 1.0f;
-				sceneManager.UpdateScore (stamp.GetComponent<EnemyScript> ().score);
-			}
-			else
-			{
-				GameOverLayer.SetActive (true);	
+				if (stamp != null)
+				{
+					Debug.Log ("Jump");
+					velocity = Vector3.up * stamp.GetComponent<EnemyScript> ().elastic;
+					sceneManager.playerSpeed += 1.0f;
+					sceneManager.UpdateScore (stamp.GetComponent<EnemyScript> ().score);
+				}
+				else
+				{
+					GameOverLayer.SetActive (true);	
+				}
 			}
 		}
 	}
