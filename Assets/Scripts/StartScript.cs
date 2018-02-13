@@ -2,79 +2,86 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StartScript : MonoBehaviour {
+public class StartScript : MonoBehaviour
+{
 
-	public GameObject SceneManager;
-	GameSceneScript sceneManager;
-	public GameObject Player;
-	public GameObject Floor;
-	public GameObject StartStage;
-	public GameObject Camera;
-	bool ready;
-	bool coroutineRunning;
-	float moveSpeed = 4;
+    public GameObject SceneManager;
+    GameSceneScript sceneManager;
+    CameraScript cameraScript;
+    public GameObject Player;
+    public GameObject Floor;
+    public GameObject StartStage;
+    public GameObject Camera;
+    bool ready;
+    bool coroutineRunning;
+    float moveSpeed = 4;
 
-	// Use this for initialization
-	void Start ()
-	{
-		sceneManager = SceneManager.GetComponent<GameSceneScript> ();
-		ready = false;
-		coroutineRunning = false;
-	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
-		if (!ready && !coroutineRunning)
-		{
-			StartCoroutine (StartAction ());
-		}
-		if (ready)
-		{
-			sceneManager.isPlaying = true;
-			ready = false;
-		}
-	}
+    // Use this for initialization
+    void Start()
+    {
+        sceneManager = SceneManager.GetComponent<GameSceneScript>();
+        cameraScript = Camera.GetComponent<CameraScript>();
+        cameraScript.cameraWork = false;
+        sceneManager.isPlaying = false;
+    }
 
-	IEnumerator StartAction()
-	{
-		coroutineRunning = true;
-		Debug.Log ("Start");
-		while (Player.transform.position.x <= 0)
-		{
-			Player.transform.Translate (moveSpeed * Time.deltaTime, 0, 0);
-			StartStage.transform.Translate (-moveSpeed * Time.deltaTime, 0, 0);
-			Floor.transform.Translate (-moveSpeed * Time.deltaTime, 0, 0);
-			yield return new WaitForEndOfFrame();
-		}
+    // Update is called once per frame
+    void Update()
+    {
+        Player.transform.position += Player.GetComponent<CharacterScript>().velocity * Time.deltaTime;
 
-		StartCoroutine(Camera.GetComponent<CameraScript> ().CameraStart());
+        if (Player.transform.position.x <= 0)
+        {
+            Player.transform.Translate(moveSpeed * Time.deltaTime, 0, 0);
+            StartStage.transform.Translate(-moveSpeed * Time.deltaTime, 0, 0);
+            Floor.transform.Translate(-moveSpeed * Time.deltaTime, 0, 0);
+        }
+        else
+        {
+            Vector2 cameraPos = new Vector2(Camera.transform.position.x, Camera.transform.position.y);
+            Vector2 playerPos = new Vector2(Player.transform.position.x, Player.transform.position.y);
+            
+            if ((cameraPos - playerPos).magnitude >= 0.6f)
+            {
+                
+                Camera.transform.position = Vector3.MoveTowards(Camera.transform.position,
+                                                        new Vector3(Player.transform.position.x, Player.transform.position.y, -10),
+                                                        1.0f * Time.deltaTime);
+                
+                cameraPos = Camera.transform.position;
+                playerPos = Player.transform.position;
+                
+                if ((cameraPos - playerPos).magnitude <= 0f)
+                {
+                    cameraScript.cameraWork = true;
+                }
+            }
+            
 
-		while(StartStage.transform.position.x >= -5f)
-		{
-			StartStage.transform.Translate (-moveSpeed * Time.deltaTime, 0, 0);
-			Floor.transform.Translate (-moveSpeed * Time.deltaTime, 0, 0);
-			yield return new WaitForEndOfFrame ();
-		}
-		Debug.Log ("platform move" + StartStage.transform.position);
+            if (StartStage.transform.position.x >= -5f)
+            {
+                StartStage.transform.Translate(-moveSpeed * Time.deltaTime, 0, 0);
+                Floor.transform.Translate(-moveSpeed * Time.deltaTime, 0, 0);
+            }
+            else
+            {
+                if (Player.GetComponent<CharacterScript>().velocity.y <= 0)
+                    Player.GetComponent<CharacterScript>().velocity += Vector3.up * 2;
 
-		Debug.Log ("ready");
-		Player.GetComponent<CharacterScript> ().velocity += Vector3.up * 2;
+                if (StartStage.transform.position.x >= -11f)
+                {
+                    StartStage.transform.Translate(-moveSpeed * Time.deltaTime, 0, 0);
+                    Floor.transform.Translate(-moveSpeed * Time.deltaTime, 0, 0);
+                }
+                else
+                {
+                    StartStage.SetActive(false);
+                    sceneManager.SetFloorPosition();
+                    sceneManager.isPlaying = true;
+                    this.enabled = false;
+                }
+            }
+        }
 
-
-		while (StartStage.transform.position.x >= -11f)
-		{
-			StartStage.transform.Translate (-moveSpeed * Time.deltaTime, 0, 0);
-			Floor.transform.Translate (-moveSpeed * Time.deltaTime, 0, 0);
-			yield return new WaitForEndOfFrame ();
-		}
-		Debug.Log ("platform move" + StartStage.transform.position);
-		Debug.Log ("platform move" + Floor.transform.position);
-
-		StartStage.SetActive (false);
-		sceneManager.SetFloorPosition ();
-
-		ready = true;
-		yield return null;
-	}
+    }
 }

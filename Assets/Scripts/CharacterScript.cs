@@ -22,7 +22,6 @@ public class CharacterScript : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		transform.position += velocity * Time.deltaTime;
 
 		if (transform.position.y <= -2.3)
 		{
@@ -43,6 +42,7 @@ public class CharacterScript : MonoBehaviour
 
 		if (sceneManager.isPlaying)
 		{
+		    transform.position += velocity * Time.deltaTime;
 			velocity += Vector3.down * gravity * Time.deltaTime;
 			if (Input.GetKeyDown (KeyCode.Space))
 			{

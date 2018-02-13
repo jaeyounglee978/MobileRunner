@@ -15,11 +15,13 @@ public class BackgroundScript : MonoBehaviour {
 	float farBGwidth;
 	float middleBGwidth;
 	float closeBGwidth;
+    public bool isScrolling;
 
 
 	// Use this for initialization
 	void Start ()
 	{
+        isScrolling = true;
 		FarBGStartPosition = FarBGObject.transform.position;
 		//MiddleBGStartPosition = MiddleBGObject.transform.position;
 		CloseBGStartPosition = CloseBGObject.transform.position;
@@ -32,10 +34,13 @@ public class BackgroundScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
 	{
-		float farPositionDelta = Mathf.Repeat (Time.time * sceneScript.playerSpeed, farBGwidth);
-		float closePositionDelta = Mathf.Repeat (Time.time * sceneScript.playerSpeed, closeBGwidth);
-		FarBGObject.transform.position = FarBGStartPosition + Vector3.left * farPositionDelta * 0.5f;
-		//MiddleBGObject.transform.position = MiddleBGStartPosition + Vector3.left * positionDelta * 0.7f;
-		CloseBGObject.transform.position = CloseBGStartPosition + Vector3.left * closePositionDelta;
+        if (isScrolling)
+        {
+		    float farPositionDelta = Mathf.Repeat (Time.time * sceneScript.playerSpeed, farBGwidth);
+		    float closePositionDelta = Mathf.Repeat (Time.time * sceneScript.playerSpeed, closeBGwidth);
+		    FarBGObject.transform.position = FarBGStartPosition + Vector3.left * farPositionDelta * 0.5f;
+		    //MiddleBGObject.transform.position = MiddleBGStartPosition + Vector3.left * positionDelta * 0.7f;
+		    CloseBGObject.transform.position = CloseBGStartPosition + Vector3.left * closePositionDelta;
+        }
 	}
 }

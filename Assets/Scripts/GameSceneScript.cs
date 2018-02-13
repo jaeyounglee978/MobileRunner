@@ -5,83 +5,88 @@ using UnityEngine.UI;
 
 public class GameSceneScript : MonoBehaviour
 {
-	public GameObject PauseMenu;
-	public GameObject Enemy;
-	public GameObject Floor;
-	public GameObject Score;
-	int currentScore;
-	float responeTime;
-	public float playerSpeed;
-	Vector3 startPosition;
-	Queue<GameObject> EnemyQueue;
-	public bool isPlaying;
+    public GameObject PauseMenu;
+    public GameObject Enemy;
+    public GameObject Floor;
+    public GameObject Score;
+    int currentScore;
+    float responeTime;
+    public float playerSpeed;
+    Vector3 startPosition;
+    Queue<GameObject> EnemyQueue;
+    public bool isPlaying;
+    BackgroundScript bgScript;
 
-	// Use this for initialization
-	void Start ()
-	{
-		PauseMenu.SetActive(false);
-		responeTime = 1.0f;
-		playerSpeed = 5.0f;
+    // Use this for initialization
+    void Start()
+    {
+        PauseMenu.SetActive(false);
+        responeTime = 1.0f;
+        playerSpeed = 5.0f;
 
-		currentScore = 0;
-		Score.GetComponent<Text>().text = currentScore.ToString();
-		EnemyQueue = new Queue<GameObject> ();
-		isPlaying = false;
-	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
-		if (isPlaying)
-		{
-			responeTime -= Time.deltaTime;
+        currentScore = 0;
+        Score.GetComponent<Text>().text = currentScore.ToString();
+        EnemyQueue = new Queue<GameObject>();
+        bgScript = GetComponent<BackgroundScript>();
+    }
 
-			if (responeTime < 0)
-				EnemyGenerator ();
+    // Update is called once per frame
+    void Update()
+    {
+        if (isPlaying)
+        {
+            responeTime -= Time.deltaTime;
 
-			float newPosition = Mathf.Repeat (Time.time * playerSpeed, 6f);
-			Floor.transform.position = startPosition + Vector3.left * newPosition;
+            if (responeTime < 0)
+                EnemyGenerator();
 
-			if (EnemyQueue.Count > 0)
-			{
-				if (EnemyQueue.Peek ().transform.position.x < -10f)
-					Destroy (EnemyQueue.Dequeue ());
-			}
-		}
-	}
+            float newPosition = Mathf.Repeat(Time.time * playerSpeed, 6f);
+            Floor.transform.position = startPosition + Vector3.left * newPosition;
 
-	public void PauseMenuButton()
-	{
-		PauseMenu.SetActive(true);
-	}
+            if (EnemyQueue.Count > 0)
+            {
+                if (EnemyQueue.Peek().transform.position.x < -10f)
+                    Destroy(EnemyQueue.Dequeue());
+            }
+        }
+    }
 
-	public void BacktoMenuButton()
-	{
-		UnityEngine.SceneManagement.SceneManager.LoadScene("StartMenu");
-	}
+    public void PauseMenuButton()
+    {
+        PauseMenu.SetActive(true);
+        isPlaying = false;
+        bgScript.isScrolling = false;
+    }
 
-	public void ContinueButton()
-	{
-		PauseMenu.SetActive(false);
-	}
+    public void BacktoMenuButton()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("StartMenu");
+    }
 
-	void EnemyGenerator()
-	{
-		GameObject newEnemy = Instantiate(Enemy, new Vector3(10f, -2.6f, 0f), Quaternion.identity);
-		newEnemy.GetComponent<EnemyScript>().moveSpeed = playerSpeed;
-		newEnemy.GetComponent<EnemyScript>().elastic = 4f;
-		EnemyQueue.Enqueue (newEnemy);
-		responeTime = 0.7f;
-	}
+    public void ContinueButton()
+    {
+        PauseMenu.SetActive(false);
+        isPlaying = true;
+        bgScript.isScrolling = true;
+    }
 
-	public void UpdateScore(int score)
-	{
-		currentScore += score;
-		Score.GetComponent<Text>().text = currentScore.ToString ();
-	}
+    void EnemyGenerator()
+    {
+        GameObject newEnemy = Instantiate(Enemy, new Vector3(10f, -2.6f, 0f), Quaternion.identity);
+        newEnemy.GetComponent<EnemyScript>().moveSpeed = playerSpeed;
+        newEnemy.GetComponent<EnemyScript>().elastic = 4f;
+        EnemyQueue.Enqueue(newEnemy);
+        responeTime = 0.7f;
+    }
 
-	public void SetFloorPosition()
-	{
-		startPosition = Floor.transform.position;
-	}
+    public void UpdateScore(int score)
+    {
+        currentScore += score;
+        Score.GetComponent<Text>().text = currentScore.ToString();
+    }
+
+    public void SetFloorPosition()
+    {
+        startPosition = Floor.transform.position;
+    }
 }
