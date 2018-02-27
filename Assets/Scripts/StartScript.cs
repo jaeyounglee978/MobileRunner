@@ -51,7 +51,7 @@ public class StartScript : MonoBehaviour
                 cameraPos = Camera.transform.position;
                 playerPos = Player.transform.position;
                 
-                if ((cameraPos - playerPos).magnitude <= 0f)
+                if ((cameraPos - playerPos).magnitude <= 0.6f)
                 {
                     cameraScript.cameraWork = true;
                 }

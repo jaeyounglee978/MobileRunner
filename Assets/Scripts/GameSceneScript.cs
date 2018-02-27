@@ -10,7 +10,7 @@ public class GameSceneScript : MonoBehaviour
     public GameObject Floor;
     public GameObject Score;
     int currentScore;
-    float responeTime;
+    float respawnTime;
     public float playerSpeed;
     Vector3 startPosition;
     Queue<GameObject> EnemyQueue;
@@ -21,7 +21,7 @@ public class GameSceneScript : MonoBehaviour
     void Start()
     {
         PauseMenu.SetActive(false);
-        responeTime = 1.0f;
+		respawnTime = 1.0f;
         playerSpeed = 5.0f;
 
         currentScore = 0;
@@ -35,9 +35,9 @@ public class GameSceneScript : MonoBehaviour
     {
         if (isPlaying)
         {
-            responeTime -= Time.deltaTime;
+            respawnTime -= Time.deltaTime;
 
-            if (responeTime < 0)
+            if (respawnTime < 0)
                 EnemyGenerator();
 
             float newPosition = Mathf.Repeat(Time.time * playerSpeed, 6f);
@@ -72,11 +72,14 @@ public class GameSceneScript : MonoBehaviour
 
     void EnemyGenerator()
     {
-        GameObject newEnemy = Instantiate(Enemy, new Vector3(10f, -2.6f, 0f), Quaternion.identity);
+		Vector3 enemyPosition = new Vector3 (10f, -3.2f, 0f);
+		enemyPosition += Vector3.up * Enemy.GetComponent<SpriteRenderer> ().bounds.size.y;
+		GameObject newEnemy = Instantiate(Enemy, enemyPosition, Quaternion.identity);
+
         newEnemy.GetComponent<EnemyScript>().moveSpeed = playerSpeed;
         newEnemy.GetComponent<EnemyScript>().elastic = 4f;
         EnemyQueue.Enqueue(newEnemy);
-        responeTime = 0.7f;
+        respawnTime = 0.7f;
     }
 
     public void UpdateScore(int score)
