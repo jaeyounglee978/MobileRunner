@@ -41,7 +41,7 @@ public class StartScript : MonoBehaviour
             Vector2 cameraPos = new Vector2(Camera.transform.position.x, Camera.transform.position.y);
             Vector2 playerPos = new Vector2(Player.transform.position.x, Player.transform.position.y);
             
-            if ((cameraPos - playerPos).magnitude >= 0.6f)
+            if ((cameraPos - playerPos).magnitude >= 0.05f)
             {
                 
                 Camera.transform.position = Vector3.MoveTowards(Camera.transform.position,
@@ -51,7 +51,7 @@ public class StartScript : MonoBehaviour
                 cameraPos = Camera.transform.position;
                 playerPos = Player.transform.position;
                 
-                if ((cameraPos - playerPos).magnitude <= 0.6f)
+                if ((cameraPos - playerPos).magnitude <= 0.05f)
                 {
                     cameraScript.cameraWork = true;
                 }
