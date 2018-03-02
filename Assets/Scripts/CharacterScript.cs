@@ -6,82 +6,82 @@ using UnityEngine.UI;
 public class CharacterScript : MonoBehaviour
 {
 
-	public float gravity;
-	public Vector3 velocity;
-	public GameObject GameOverLayer;
-	public GameObject SceneManager;
-	GameSceneScript sceneManager;
+    public float gravity;
+    public Vector3 velocity;
+    public GameObject GameOverLayer;
+    public GameObject SceneManager;
+    GameSceneScript sceneManager;
 
-	// Use this for initialization
-	void Start ()
-	{
-		//velocity.y = gravity;
-		sceneManager = SceneManager.GetComponent<GameSceneScript>();
-	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
+    // Use this for initialization
+    void Start()
+    {
+        //velocity.y = gravity;
+        sceneManager = SceneManager.GetComponent<GameSceneScript>();
+    }
 
-		if (transform.position.y <= -2.3)
-		{
-			GameObject stamp = OverlapChecker ();
+    // Update is called once per frame
+    void Update()
+    {
 
-			if (stamp != null)
-			{
-				velocity = Vector3.up * stamp.GetComponent<EnemyScript> ().elastic;
-				sceneManager.playerSpeed += 2.0f;
-				sceneManager.UpdateScore (stamp.GetComponent<EnemyScript> ().score);
-			}
-			else
-			{
-				sceneManager.isPlaying = false;
-				GameOverLayer.SetActive (true);	
-			}
-		}
+        if (transform.position.y <= -2.3)
+        {
+            GameObject stamp = OverlapChecker();
 
-		if (sceneManager.isPlaying)
-		{
-		    transform.position += velocity * Time.deltaTime;
-			velocity += Vector3.down * gravity * Time.deltaTime;
-			if (Input.GetKeyDown (KeyCode.Space))
-			{
-				GameObject stamp = Stamping ();
+            if (stamp != null)
+            {
+                velocity = Vector3.up * stamp.GetComponent<EnemyScript>().elastic;
+                sceneManager.playerSpeed += 2.0f;
+                sceneManager.UpdateScore(stamp.GetComponent<EnemyScript>().score);
+            }
+            else
+            {
+                sceneManager.isPlaying = false;
+                GameOverLayer.SetActive(true);
+            }
+        }
 
-				if (stamp != null)
-				{
-					Debug.Log ("Jump");
-					velocity = Vector3.up * stamp.GetComponent<EnemyScript> ().elastic;
-					sceneManager.playerSpeed += 1.0f;
-					sceneManager.UpdateScore (stamp.GetComponent<EnemyScript> ().score);
-				}
-				else
-				{
-					GameOverLayer.SetActive (true);	
-				}
-			}
-		}
-	}
+        if (sceneManager.isPlaying)
+        {
+            transform.position += velocity * Time.deltaTime;
+            velocity += Vector3.down * gravity * Time.deltaTime;
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                GameObject stamp = Stamping();
 
-	GameObject Stamping()
-	{
-		transform.position = new Vector3 (transform.position.x, -2.3f, transform.position.z);
+                if (stamp != null)
+                {
+                    Debug.Log("Jump");
+                    velocity = Vector3.up * stamp.GetComponent<EnemyScript>().elastic;
+                    sceneManager.playerSpeed += stamp.GetComponent<EnemyScript>().accelerate;
+                    sceneManager.UpdateScore(stamp.GetComponent<EnemyScript>().score);
+                }
+                else
+                {
+                    GameOverLayer.SetActive(true);
+                }
+            }
+        }
+    }
 
-		return OverlapChecker ();
-	}
+    GameObject Stamping()
+    {
+        transform.position = new Vector3(transform.position.x, -2.3f, transform.position.z);
 
-	GameObject OverlapChecker()
-	{
-		Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1f);
+        return OverlapChecker();
+    }
 
-		Debug.Log (colliders.Length);
+    GameObject OverlapChecker()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1f);
 
-		for (int i = 0; i < colliders.Length; i++)
-		{
-			if (colliders[i].gameObject.tag == "Enemy")
-				return colliders [i].gameObject;
-		}
+        Debug.Log(colliders.Length);
 
-		return null;
-	}
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            if (colliders[i].gameObject.tag == "Enemy")
+                return colliders[i].gameObject;
+        }
+
+        return null;
+    }
 }

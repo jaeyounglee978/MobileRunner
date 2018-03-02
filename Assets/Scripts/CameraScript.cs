@@ -25,7 +25,7 @@ public class CameraScript : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {   
+    {
         if (cameraWork)
         {
             if (player.transform.position.y > 0)
@@ -53,7 +53,7 @@ public class CameraScript : MonoBehaviour
                 }
             }
         }
-        
+
     }
 
 

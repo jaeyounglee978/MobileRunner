@@ -359,7 +359,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 0.1
-  m_Text: GameGameGame
+  m_Text: Stamp Enemies
 --- !u!222 &578064299
 CanvasRenderer:
   m_ObjectHideFlags: 0
